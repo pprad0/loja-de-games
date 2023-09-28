@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace lojadegames.Controllers
 {
-    [Route("~/categorias")]
+    [Route("~/categoria")]
     [ApiController]
     public class CategoriaController : ControllerBase
     {

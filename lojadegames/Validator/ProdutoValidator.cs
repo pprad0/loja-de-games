@@ -24,8 +24,7 @@ namespace lojadegames.Validator
 
             RuleFor(p => p.Preco)
                 .NotEmpty()
-                .MinimumLength(5)
-                .MaximumLength(100);
+                .GreaterThanOrEqualTo(0);
 
             RuleFor(p => p.Foto)
                 .NotEmpty()

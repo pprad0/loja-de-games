@@ -21,9 +21,9 @@ namespace lojadegames.Model
         [StringLength(255)]
         public string Console { get; set; } = string.Empty;
 
-        [Column(TypeName = "varchar")]
+        [Column(TypeName = "decimal(8,2)")]
         [StringLength(255)]
-        public string Preco { get; set; } = string.Empty;
+        public decimal Preco { get; set; }
 
         [Column(TypeName = "varchar")]
         [StringLength(510)]
