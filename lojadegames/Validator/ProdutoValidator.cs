@@ -5,31 +5,24 @@ namespace lojadegames.Validator
 {
     public class ProdutoValidator : AbstractValidator<Produto>
     {
+
         public ProdutoValidator()
         {
+
             RuleFor(p => p.Nome)
-                .NotEmpty()
-                .MinimumLength(5)
-                .MaximumLength(100);
+                .NotEmpty();
 
             RuleFor(p => p.Descricao)
-                .NotEmpty()
-                .MinimumLength(10)
-                .MaximumLength(1000);
+                .NotEmpty();
 
             RuleFor(p => p.Console)
-                .NotEmpty()
-                .MinimumLength(2)
-                .MaximumLength(100);
+                .NotEmpty();
 
             RuleFor(p => p.Preco)
-                .NotEmpty()
-                .GreaterThanOrEqualTo(0);
+                .NotNull()
+                .GreaterThan(0)
+                .PrecisionScale(20, 2, false); ;
 
-            RuleFor(p => p.Foto)
-                .NotEmpty()
-                .MinimumLength(10)
-                .MaximumLength(1000);
         }
     }
 }

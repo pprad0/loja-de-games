@@ -7,10 +7,9 @@ namespace lojadegames.Validator
     {
         public CategoriaValidator()
         {
-            RuleFor(p => p.Descricao)
-                .NotEmpty()
-                .MinimumLength(10)
-                .MaximumLength(1000);
+
+            RuleFor(p => p.Nome)
+                .NotEmpty();
         }
     }
 }

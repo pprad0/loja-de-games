@@ -1,11 +1,13 @@
 ﻿using FluentValidation;
 using lojadegames.Model;
 using lojadegames.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lojadegames.Controllers
 {
-    [Route("~/produto")]
+    [Authorize]
+    [Route("~/produtos")]
     [ApiController]
     public class ProdutoController : ControllerBase
     {
@@ -34,7 +36,9 @@ namespace lojadegames.Controllers
             var Resposta = await _produtoService.GetById(id);
 
             if (Resposta is null)
-                return NotFound();
+            {
+                return NotFound("Produto não encontrado!");
+            }
 
             return Ok(Resposta);
         }
@@ -45,16 +49,31 @@ namespace lojadegames.Controllers
             return Ok(await _produtoService.GetByNome(nome));
         }
 
+        [HttpGet("nome/{nome}/econsole/{console}")]
+        public async Task<ActionResult> GetByNomeEConsole(string nome, string console)
+        {
+            return Ok(await _produtoService.GetByNomeEConsole(nome, console));
+        }
+
+        [HttpGet("nome/{nome}/ouconsole/{console}")]
+        public async Task<ActionResult> GetByNomeOuConsole(string nome, string console)
+        {
+            return Ok(await _produtoService.GetByNomeOuConsole(nome, console));
+        }
+
+        [HttpGet("preco_inicial/{precoInicial}/preco_final/{precoFinal}")]
+        public async Task<ActionResult> GetByBetweenPreco(decimal precoInicial, decimal precoFinal)
+        {
+            return Ok(await _produtoService.GetByBetweenPreco(precoInicial, precoFinal));
+        }
+
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] Produto produto)
         {
-
             var validarProduto = await _produtoValidator.ValidateAsync(produto);
 
             if (!validarProduto.IsValid)
-            {
                 return StatusCode(StatusCodes.Status400BadRequest, validarProduto);
-            }
 
             var Resposta = await _produtoService.Create(produto);
 
@@ -62,7 +81,6 @@ namespace lojadegames.Controllers
                 return BadRequest("Categoria não encontrada!");
 
             return CreatedAtAction(nameof(GetById), new { id = produto.Id }, produto);
-
         }
 
         [HttpPut]
@@ -74,14 +92,12 @@ namespace lojadegames.Controllers
             var validarProduto = await _produtoValidator.ValidateAsync(produto);
 
             if (!validarProduto.IsValid)
-            {
                 return StatusCode(StatusCodes.Status400BadRequest, validarProduto);
-            }
 
             var Resposta = await _produtoService.Update(produto);
 
             if (Resposta is null)
-                return NotFound("Produto e/ou Categoria não Encontrados!");
+                return NotFound("Produto e/ou Categoria não encontrados!");
 
             return Ok(Resposta);
 
@@ -93,12 +109,13 @@ namespace lojadegames.Controllers
             var BuscaProduto = await _produtoService.GetById(id);
 
             if (BuscaProduto is null)
-                return NotFound("Produto não foi encontrado!");
+                return NotFound("Produto não encontrado!");
 
             await _produtoService.Delete(BuscaProduto);
 
             return NoContent();
 
         }
+
     }
 }

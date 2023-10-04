@@ -1,11 +1,13 @@
 ﻿using FluentValidation;
 using lojadegames.Model;
 using lojadegames.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lojadegames.Controllers
 {
-    [Route("~/categoria")]
+    [Authorize]
+    [Route("~/categorias")]
     [ApiController]
     public class CategoriaController : ControllerBase
     {
@@ -34,68 +36,64 @@ namespace lojadegames.Controllers
             var Resposta = await _categoriaService.GetById(id);
 
             if (Resposta is null)
-                return NotFound();
+            {
+                return NotFound("Categoria não encontrado!");
+            }
 
             return Ok(Resposta);
         }
 
-        [HttpGet("descricao/{descricao}")]
-        public async Task<ActionResult> GetByDescricao(string descricao)
+        [HttpGet("nome/{nome}")]
+        public async Task<ActionResult> GetByNome(string nome)
         {
-            return Ok(await _categoriaService.GetByDescricao(descricao));
+            return Ok(await _categoriaService.GetByNome(nome));
         }
 
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] Categoria categoria)
         {
-
             var validarCategoria = await _categoriaValidator.ValidateAsync(categoria);
 
             if (!validarCategoria.IsValid)
-            {
                 return StatusCode(StatusCodes.Status400BadRequest, validarCategoria);
-            }
 
-            await _categoriaService.Create(categoria);
+            var Resposta = await _categoriaService.Create(categoria);
 
             return CreatedAtAction(nameof(GetById), new { id = categoria.Id }, categoria);
-
         }
 
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] Categoria categoria)
         {
             if (categoria.Id == 0)
-                return BadRequest("Id da Categoria é inválido!");
+                return BadRequest("O Id do Categoria é inválido!");
 
             var validarCategoria = await _categoriaValidator.ValidateAsync(categoria);
 
             if (!validarCategoria.IsValid)
-            {
                 return StatusCode(StatusCodes.Status400BadRequest, validarCategoria);
-            }
 
             var Resposta = await _categoriaService.Update(categoria);
 
             if (Resposta is null)
-                return NotFound("Categoria não Encontrada!");
+                return NotFound("Categoria não encontrado!");
 
             return Ok(Resposta);
-
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var buscarCategoria = await _categoriaService.GetById(id);
+            var BuscaCategoria = await _categoriaService.GetById(id);
 
-            if (buscarCategoria is null)
-                return NotFound("Categoria não foi encontrada!");
+            if (BuscaCategoria is null)
+                return NotFound("Categoria não encontrado!");
 
-            await _categoriaService.Delete(buscarCategoria);
+            await _categoriaService.Delete(BuscaCategoria);
 
             return NoContent();
 
         }
+
     }
 }

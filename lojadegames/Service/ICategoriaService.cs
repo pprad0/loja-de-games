@@ -8,7 +8,7 @@ namespace lojadegames.Service
 
         Task<Categoria?> GetById(long id);
 
-        Task<IEnumerable<Categoria>> GetByDescricao(string descricao);
+        Task<IEnumerable<Categoria>> GetByNome(string nome);
 
         Task<Categoria?> Create(Categoria categoria);
 

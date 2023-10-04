@@ -6,7 +6,6 @@ namespace lojadegames.Service.Implements
 {
     public class CategoriaService : ICategoriaService
     {
-
         private readonly AppDbContext _context;
 
         public CategoriaService(AppDbContext context)
@@ -17,7 +16,7 @@ namespace lojadegames.Service.Implements
         public async Task<IEnumerable<Categoria>> GetAll()
         {
             return await _context.Categorias
-                .Include(t => t.Produto)
+                .Include(c => c.Produto)
                 .ToListAsync();
         }
 
@@ -25,27 +24,24 @@ namespace lojadegames.Service.Implements
         {
             try
             {
-
                 var Categoria = await _context.Categorias
-                    .Include(t => t.Produto)
+                    .Include(c => c.Produto)
                     .FirstAsync(i => i.Id == id);
 
                 return Categoria;
-
             }
             catch
             {
                 return null;
             }
-
         }
 
-        public async Task<IEnumerable<Categoria>> GetByDescricao(string descricao)
+        public async Task<IEnumerable<Categoria>> GetByNome(string nome)
         {
             var Categoria = await _context.Categorias
-                            .Include(t => t.Produto)
-                            .Where(t => t.Descricao.Contains(descricao))
-                            .ToListAsync();
+                .Include(c => c.Produto)
+                .Where(p => p.Nome.Contains(nome))
+                .ToListAsync();
 
             return Categoria;
         }
@@ -60,25 +56,22 @@ namespace lojadegames.Service.Implements
 
         public async Task<Categoria?> Update(Categoria categoria)
         {
-            var TemaUpdate = await _context.Categorias.FindAsync(categoria.Id);
+            var CategoriaUpdate = await _context.Categorias.FindAsync(categoria.Id);
 
-            if (TemaUpdate is null)
+            if (CategoriaUpdate is null)
                 return null;
 
-            _context.Entry(TemaUpdate).State = EntityState.Detached;
+            _context.Entry(CategoriaUpdate).State = EntityState.Detached;
             _context.Entry(categoria).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return categoria;
-
         }
 
         public async Task Delete(Categoria categoria)
         {
-            _context.Remove(categoria);
+            _context.Categorias.Remove(categoria);
             await _context.SaveChangesAsync();
-
         }
-
     }
 }
