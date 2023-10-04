@@ -28,7 +28,7 @@ namespace lojadegames.Service.Implements
 
                 var Usuario = await _context.Users
                     .Include(t => t.Produto)
-                    .FirstAsync(u => u.Id == id);
+                    .FirstAsync(i => i.Id == id);
 
                 Usuario.Senha = "";
 

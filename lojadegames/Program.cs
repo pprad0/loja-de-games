@@ -26,23 +26,23 @@ namespace lojadegames
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                     options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-                }
-            );
+                });
 
             // Conexão com o Banco de dados
-            var connectionString = builder.Configuration.
-                    GetConnectionString("DefaultConnection");
+
+            var connectionString = builder.Configuration
+                .GetConnectionString("DefaultConnection");
 
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connectionString)
             );
 
-            // Validação das Entidades
+            // Registrar a Validação das Entidades
             builder.Services.AddTransient<IValidator<Produto>, ProdutoValidator>();
             builder.Services.AddTransient<IValidator<Categoria>, CategoriaValidator>();
             builder.Services.AddTransient<IValidator<User>, UserValidator>();
 
-            // Registrar as Classes e Interfaces Service
+            // Registrar as Classes de Serviço (Service)
             builder.Services.AddScoped<IProdutoService, ProdutoService>();
             builder.Services.AddScoped<ICategoriaService, CategoriaService>();
             builder.Services.AddScoped<IUserService, UserService>();
@@ -79,21 +79,20 @@ namespace lojadegames
                     policy =>
                     {
                         policy.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
                     });
             });
 
             var app = builder.Build();
 
-            // Criar o Banco de dados e as tabelas Automaticamente
+            // Criar o Banco de dados e as Tabelas
+
             using (var scope = app.Services.CreateAsyncScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 dbContext.Database.EnsureCreated();
             }
-
-            app.UseDeveloperExceptionPage();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -102,11 +101,12 @@ namespace lojadegames
                 app.UseSwaggerUI();
             }
 
+            // Inicializa o CORS
             app.UseCors("MyPolicy");
 
-            app.UseAuthorization();
-
             app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.MapControllers();
 
